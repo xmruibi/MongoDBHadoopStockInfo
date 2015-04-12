@@ -48,6 +48,24 @@ public class StockCrawler {
 		}
 	}
 
+	public void saveSingleStockInfo(String symbol) {
+		try {
+			Stock stock = YahooFinance.get(symbol);
+			if (stock != null) {
+				List<HistoricalQuote> quotes = stock.getHistory(from, to,
+						Interval.DAILY);
+				Quote quote = new Quote(symbol);
+				quote.setQuotes(quotes);
+				dbUtil.writeHistoricalQuotes(quote);
+				log.info(stock.getName() + quotes.size());
+			}
+		} catch (Exception e) {
+			log.error(e + " " + e.getCause());
+		} finally {
+			dbUtil.close();
+		}
+	}
+
 	public static void main(String[] args) {
 		StockCrawler stockCrawler = new StockCrawler();
 		stockCrawler.saveStockInfo(SymbolReader.getLocalSymbol());

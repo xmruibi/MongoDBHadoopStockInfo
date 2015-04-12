@@ -32,6 +32,5 @@ public class HadoopConnectorUtil extends MongoTool{
         urlbuiler.addHost("45.55.186.238 " , 20000);
         urlbuiler.addHost("104.131.106.22" , 20000);
         config.setInputURI(urlbuiler.build());
-        
 	}
 }
