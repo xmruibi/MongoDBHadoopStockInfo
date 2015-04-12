@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import yahoofinance.histquotes.HistoricalQuote;
 
 import com.model.Quote;
 import com.mongodb.BasicDBObject;
@@ -17,8 +16,16 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 import com.mongodb.util.JSON;
 
+
+/**
+ * This class is utility for connecting remote distributed sharding MongoDB
+ * @author birui
+ *
+ */
 public class JavaDriverUtil {
+	// list of remote mongodb servers
 	private final List<ServerAddress> serverSeeds;
+	
 	private MongoClient mongoClient = null;
 	private DB database = null;
 	private DBCollection collection = null;
@@ -40,24 +47,30 @@ public class JavaDriverUtil {
 	}
 
 	/**
-	 * Input database name
-	 * 
+	 * Input database name and collection name
 	 * @param dbName
+	 * @param clctName
 	 */
 	public void connDB(String dbName, String clctName) {
 		database = mongoClient.getDB(dbName);
 		collection = database.getCollection(clctName);
 	}
 
+	/**
+	 * Write Quote object and convert to JSON
+	 * @param quote
+	 */
 	public void writeHistoricalQuotes(Quote quote) {
 		if (quote == null||quote.getQuotes().size()==0)
 			return;
-			BasicDBObject obj = (BasicDBObject) JSON.parse(GsonUtil
-					.QuotetoJson(quote));
+			BasicDBObject obj = (BasicDBObject) JSON.parse(GsonUtil.QuotetoJson(quote));
 			collection.insert(obj);
 
 	}
 
+	/**
+	 * DB connection close method
+	 */
 	public void close() {
 		mongoClient.close();
 	}

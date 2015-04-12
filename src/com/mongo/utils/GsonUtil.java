@@ -1,16 +1,20 @@
 package com.mongo.utils;
 
-import org.apache.commons.codec.net.QuotedPrintableCodec;
 
 import yahoofinance.histquotes.HistoricalQuote;
 
 import com.google.gson.Gson;
 import com.model.Quote;
 
-
+/**
+ * This class is for Conversions between JSON and Java Object
+ * @author birui
+ *
+ */
 public class GsonUtil {
 	public static String HistoricalQuotetoJson(HistoricalQuote quote) {
 		Gson gson = new Gson();
+		quote.setSymbol(null);
 		String json = gson.toJson(quote);
 		return json;
 	}
