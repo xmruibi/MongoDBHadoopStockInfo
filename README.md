@@ -9,7 +9,7 @@
 
 The following graph is the architecture of how I set three VMs with different port to simulate the real sharding pattern(which need 15 machines actually)
 
-
+![alt tag] (https://github.com/xmruibi/shardingMongoStockInfo/blob/master/Sharded%20MongoDB.png)
 
 
 The following procedure is how I configured MongoDB on remote three VMs.
