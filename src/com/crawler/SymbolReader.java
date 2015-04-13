@@ -52,11 +52,11 @@ public class SymbolReader {
 		return stockList;
 	}
 
-	// insert symbol list into mongodb
+//	// insert symbol list into mongodb
 //	public static void main(String[] args) {
 //		JavaDriverUtil mongodriver = new JavaDriverUtil();
 //		mongodriver.connDB("stock", "symbols");
-//		for(String symbol:getLocalSymbol()){
+//		for(String symbol:getLocalSymbol(100)){
 //			mongodriver.insertDB(new Symbol(symbol));
 //			System.out.println(symbol+" inserted!");
 //		}

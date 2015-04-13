@@ -33,6 +33,8 @@ public class SymbolsReducer extends Reducer<Text, IntWritable, NullWritable, Mon
         
         // get symbol from keyIn 
         Quote quote = stockCrawler.getHistQuotesBySymbol(pKey.toString());
+        if(quote==null||quote.getSymbolName()==null||quote.getHistorical_quotes()==null)
+        	return;
         System.out.println(quote.getSymbolName()+" reducer getted!!!!!!!!!!");
         // get Quote info, set new id
         BasicBSONObject query = new BasicBSONObject("_id", quote.getKey());

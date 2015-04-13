@@ -27,7 +27,7 @@ import yahoofinance.histquotes.HistoricalQuote;
  * @author birui
  *
  */
-public class Quote{
+public class Quote {
 
 	private transient final int key;
 	private final String symbolName;
@@ -47,26 +47,39 @@ public class Quote{
 	}
 
 	public void setQuotes(List<HistoricalQuote> quotes) {
-		for(HistoricalQuote quote:quotes){
+		if (quotes == null || quotes.size() == 0) {
 			DBObject historical_quote = new BasicDBObject();
-			historical_quote.put("date", DateSerializer(quote.getDate().getTime()));
-			historical_quote.put("open", quote.getOpen().toString());
-			historical_quote.put("low", quote.getLow().toString());
-			historical_quote.put("high", quote.getHigh().toString());
-			historical_quote.put("close", quote.getClose().toString());
-			historical_quote.put("adjClose", quote.getAdjClose().toString());
-			historical_quote.put("volume", quote.getVolume());
-			
+			historical_quote.put("date", "N/A");
+			historical_quote.put("open", "N/A");
+			historical_quote.put("low", "N/A");
+			historical_quote.put("high", "N/A");
+			historical_quote.put("close", "N/A");
+			historical_quote.put("adjClose", "N/A");
+			historical_quote.put("volume", "N/A");
 			historical_quotes.add(historical_quote);
+		} else {
+			for (HistoricalQuote quote : quotes) {
+				DBObject historical_quote = new BasicDBObject();
+				historical_quote.put("date", DateSerializer(quote.getDate()
+						.getTime()));
+				historical_quote.put("open", quote.getOpen().toString());
+				historical_quote.put("low", quote.getLow().toString());
+				historical_quote.put("high", quote.getHigh().toString());
+				historical_quote.put("close", quote.getClose().toString());
+				historical_quote
+						.put("adjClose", quote.getAdjClose().toString());
+				historical_quote.put("volume", quote.getVolume());
+				historical_quotes.add(historical_quote);
+			}
 		}
 	}
 
 	private String DateSerializer(Date d) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        format.setCalendar(new GregorianCalendar(new SimpleTimeZone(0, "GMT")));
-        return format.format(d);
+		format.setCalendar(new GregorianCalendar(new SimpleTimeZone(0, "GMT")));
+		return format.format(d);
 	}
-	
+
 	public int getKey() {
 		return key;
 	}
