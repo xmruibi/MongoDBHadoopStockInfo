@@ -3,7 +3,7 @@
 ####The system following these procedures:
  - Sharded MongoDB Design (Gurantee Availability, Load Balancing)
  - MongoDB Storing and Set Main Server and other Server addresses list as MongoClientsOptions
- - Hadoop Map-Reduce with MongoDB connector
+ - Hadoop Map-Reduce with MongoDB connector (Override Mapper and Reducer classes with BSON/MongoUpdateWritable format)
  
 ##Sharded MongoDB Configuration (This part cannot shown on codes so I just present it here.)
 
