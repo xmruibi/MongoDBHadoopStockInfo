@@ -3,8 +3,10 @@ package com.mapred;
 import com.crawler.StockCrawler;
 import com.google.gson.Gson;
 import com.model.Quote;
+import com.mongodb.DBObject;
 import com.mongodb.hadoop.io.BSONWritable;
 import com.mongodb.hadoop.io.MongoUpdateWritable;
+import com.mongodb.util.JSON;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -30,16 +32,19 @@ public class SymbolsReducer extends Reducer<Text, IntWritable, NullWritable, Mon
         StockCrawler stockCrawler = new StockCrawler();
         
         // get symbol from keyIn 
-        Quote quote = stockCrawler.getQuote(pKey.toString());
-        System.out.println(quote.getSymbol()+" reducer getted!!!!!!!!!!");
+        Quote quote = stockCrawler.getHistQuotesBySymbol(pKey.toString());
+        System.out.println(quote.getSymbolName()+" reducer getted!!!!!!!!!!");
         // get Quote info, set new id
         BasicBSONObject query = new BasicBSONObject("_id", quote.getKey());
-        
+       
         // set symbol name and symbol quotes
-        BasicBSONObject stockQuote = new BasicBSONObject("symbol", quote.getSymbol());
-        stockQuote.append("historical_quote", quote.getQuotes());
-             
-        BasicBSONObject update = new BasicBSONObject("$push", stockQuote);
+        BasicBSONObject stockQuote = new BasicBSONObject();
+        stockQuote.put("symbol", quote.getSymbolName());
+        ArrayList<Object> historical_quotes =  quote.getHistorical_quotes();
+        
+        BasicBSONObject update = new BasicBSONObject("$set", stockQuote);
+        update.append("$pushAll", new BasicBSONObject("historical_quotes", historical_quotes));
+        
         pContext.write(null, new MongoUpdateWritable(query, update, true, false));
     }
 }

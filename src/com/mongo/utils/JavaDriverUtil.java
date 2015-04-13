@@ -27,8 +27,7 @@ import com.mongodb.util.JSON;
  */
 public class JavaDriverUtil {
 	// list of remote mongodb servers
-	private final List<ServerAddress> serverSeeds;
-	
+	private final List<ServerAddress> serverSeeds;	
 	private MongoClient mongoClient = null;
 	private DB database = null;
 	private DBCollection collection = null;
@@ -43,6 +42,7 @@ public class JavaDriverUtil {
 			serverSeeds.add(new ServerAddress("45.55.186.238", 27017));
 			serverSeeds.add(new ServerAddress("104.131.106.22", 27017));
 			mongoClient = new MongoClient(serverSeeds);
+			mongoClient.getMongoClientOptions();
 		} catch (UnknownHostException e) {
 			log.error(e + "" + e.getCause());
 		}

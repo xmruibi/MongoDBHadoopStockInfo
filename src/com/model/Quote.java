@@ -1,8 +1,17 @@
 package com.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
+import java.util.SimpleTimeZone;
+
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 import yahoofinance.histquotes.HistoricalQuote;
 
@@ -18,16 +27,11 @@ import yahoofinance.histquotes.HistoricalQuote;
  * @author birui
  *
  */
-public class Quote implements Serializable{
+public class Quote{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7248616655751922537L;
-	private final int key;
-	private final String symbol;
-	private List<HistoricalQuote> quotes;
-
+	private transient final int key;
+	private final String symbolName;
+	private final ArrayList<Object> historical_quotes;
 	// reference table for hashing
 	private transient int[] cryptTable;
 
@@ -35,26 +39,44 @@ public class Quote implements Serializable{
 	// value falls between 0 to 3
 	private transient float hashSeed;
 
-	public Quote(String symbol) {
+	public Quote(String symbolName) {
 		initTable();
-		this.symbol = symbol;
+		this.symbolName = symbolName;
 		this.key = hashCode();
+		this.historical_quotes = new ArrayList<Object>();
 	}
 
 	public void setQuotes(List<HistoricalQuote> quotes) {
-		this.quotes = quotes;
+		for(HistoricalQuote quote:quotes){
+			DBObject historical_quote = new BasicDBObject();
+			historical_quote.put("date", DateSerializer(quote.getDate().getTime()));
+			historical_quote.put("open", quote.getOpen().toString());
+			historical_quote.put("low", quote.getLow().toString());
+			historical_quote.put("high", quote.getHigh().toString());
+			historical_quote.put("close", quote.getClose().toString());
+			historical_quote.put("adjClose", quote.getAdjClose().toString());
+			historical_quote.put("volume", quote.getVolume());
+			
+			historical_quotes.add(historical_quote);
+		}
 	}
 
+	private String DateSerializer(Date d) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        format.setCalendar(new GregorianCalendar(new SimpleTimeZone(0, "GMT")));
+        return format.format(d);
+	}
+	
 	public int getKey() {
 		return key;
 	}
 
-	public String getSymbol() {
-		return symbol;
+	public String getSymbolName() {
+		return symbolName;
 	}
 
-	public List<HistoricalQuote> getQuotes() {
-		return quotes;
+	public ArrayList<Object> getHistorical_quotes() {
+		return historical_quotes;
 	}
 
 	/************************* Blizzard MPQ Hash Code Generate Algorithm **************************/
@@ -94,8 +116,8 @@ public class Quote implements Serializable{
 	 */
 	public int hashCode() {
 		int seed1 = 0x7FED7FED, seed2 = 0xEEEEEEEE;
-		for (int i = 0; i < symbol.length(); i++) {
-			int ch = symbol.charAt(i);
+		for (int i = 0; i < symbolName.length(); i++) {
+			int ch = symbolName.charAt(i);
 			seed1 = cryptTable[(int) (hashSeed * (1 << 8)) + ch]
 					^ (seed1 + seed2);
 			seed2 = ch + seed1 + seed2 + (seed2 << 5) + 3;
