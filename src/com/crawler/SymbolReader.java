@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.model.Symbol;
+import com.mongo.utils.JavaDriverUtil;
+
 
 /**
  * Symbols reader for stock info crawler
@@ -16,7 +19,6 @@ import java.util.List;
 public class SymbolReader {
 
 	private final static String FILE = "symbolList";
-
 
 	public static List<String> getLocalSymbol() {
 		List<String> stockList = new ArrayList<String>();
@@ -50,4 +52,14 @@ public class SymbolReader {
 		return stockList;
 	}
 
+	// insert symbol list into mongodb
+//	public static void main(String[] args) {
+//		JavaDriverUtil mongodriver = new JavaDriverUtil();
+//		mongodriver.connDB("stock", "symbols");
+//		for(String symbol:getLocalSymbol()){
+//			mongodriver.insertDB(new Symbol(symbol));
+//			System.out.println(symbol+" inserted!");
+//		}
+//		mongodriver.close();
+//	}
 }

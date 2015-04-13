@@ -2,13 +2,16 @@ package com.mongo.utils;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-
+import com.google.gson.Gson;
 import com.model.Quote;
+import com.model.Symbol;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -39,7 +42,6 @@ public class JavaDriverUtil {
 			serverSeeds.add(new ServerAddress("45.55.188.234", 27017));
 			serverSeeds.add(new ServerAddress("45.55.186.238", 27017));
 			serverSeeds.add(new ServerAddress("104.131.106.22", 27017));
-
 			mongoClient = new MongoClient(serverSeeds);
 		} catch (UnknownHostException e) {
 			log.error(e + "" + e.getCause());
@@ -56,17 +58,31 @@ public class JavaDriverUtil {
 		collection = database.getCollection(clctName);
 	}
 
-	/**
-	 * Write Quote object and convert to JSON
-	 * @param quote
-	 */
-	public void writeHistoricalQuotes(Quote quote) {
-		if (quote == null||quote.getQuotes().size()==0)
-			return;
-			BasicDBObject obj = (BasicDBObject) JSON.parse(GsonUtil.QuotetoJson(quote));
-			collection.insert(obj);
 
+	/**
+	 * Insert Database
+	 * @param object
+	 */
+	public void insertDB(Object object) {
+		if(object==null||((object instanceof Collection<?>&&((Collection) object).size()==0)))
+			return;
+		Gson gson = new Gson();
+		String json = gson.toJson(object);
+		
+		BasicDBObject obj = (BasicDBObject) JSON.parse(json);
+		collection.insert(obj);
 	}
+//	/**
+//	 * Write Quote object and convert to JSON
+//	 * @param quote
+//	 */
+//	public void writeHistoricalQuotes(Quote quote) {
+//		if (quote == null||quote.getQuotes().size()==0)
+//			return;
+//			BasicDBObject obj = (BasicDBObject) JSON.parse(GsonUtil.QuotetoJson(quote));
+//			collection.insert(obj);
+//
+//	}
 
 	/**
 	 * DB connection close method

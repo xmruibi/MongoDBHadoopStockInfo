@@ -1,32 +1,10 @@
 package com.model;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.Random;
 
-import yahoofinance.histquotes.HistoricalQuote;
-
-/**
- * Create Quote Object for setting each document in MongoDB as one key, One
- * Symbol, and its historical quotes The key is built by hashCode which is using
- * the fast MPQ hashCode generation algorithm and it also benefit for sharding;
- * 
- * Thing is still need to be improved since current code has some duplicate in
- * quotes list, like symbol name appended every quotes list item; Have tried to
- * set the null but it cost O(n) time for iterate.
- * 
- * @author birui
- *
- */
-public class Quote implements Serializable{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7248616655751922537L;
+public class Symbol {
 	private final int key;
 	private final String symbol;
-	private List<HistoricalQuote> quotes;
 
 	// reference table for hashing
 	private transient int[] cryptTable;
@@ -34,15 +12,14 @@ public class Quote implements Serializable{
 	// a randomized value applied to MPQ hash
 	// value falls between 0 to 3
 	private transient float hashSeed;
+	
+	// cache hashCode
+	private transient float hashCode;
 
-	public Quote(String symbol) {
+	public Symbol(String symbol) {
 		initTable();
 		this.symbol = symbol;
 		this.key = hashCode();
-	}
-
-	public void setQuotes(List<HistoricalQuote> quotes) {
-		this.quotes = quotes;
 	}
 
 	public int getKey() {
@@ -51,10 +28,6 @@ public class Quote implements Serializable{
 
 	public String getSymbol() {
 		return symbol;
-	}
-
-	public List<HistoricalQuote> getQuotes() {
-		return quotes;
 	}
 
 	/************************* Blizzard MPQ Hash Code Generate Algorithm **************************/
@@ -100,6 +73,7 @@ public class Quote implements Serializable{
 					^ (seed1 + seed2);
 			seed2 = ch + seed1 + seed2 + (seed2 << 5) + 3;
 		}
+		hashCode = seed1;
 		return seed1;
 	}
 }
